@@ -1,21 +1,26 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import { connectDB } from './config/database';
+import usersRouter from './routes/users';
+import teamsRouter from './routes/teams';
+import activitiesRouter from './routes/activities';
+import workoutsRouter from './routes/workouts';
+import leaderboardRouter from './routes/leaderboard';
 
 const app = express();
 const PORT = 8000;
-const MONGODB_URI = 'mongodb://localhost:27017/octofit-tracker';
 
 // Middleware
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-  });
+// Connect to MongoDB
+connectDB();
+
+// Routes
+app.use('/api/users', usersRouter);
+app.use('/api/teams', teamsRouter);
+app.use('/api/activities', activitiesRouter);
+app.use('/api/workouts', workoutsRouter);
+app.use('/api/leaderboard', leaderboardRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -24,5 +29,7 @@ app.get('/api/health', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`OctoFit Tracker API running on http://localhost:${PORT}`);
+  console.log(`🚀 OctoFit Tracker API running on http://localhost:${PORT}`);
 });
+
+export default app;
